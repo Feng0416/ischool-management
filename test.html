@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css"/>
+    	<link rel="stylesheet" href="lib/easyui/themes/icon.css"/>
+    	<link ref="stylesheet" href="lib/easyui/demo/demo.css"/>
+    	<link ref="stylesheet" href="css/login.css"/>
+    	<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="lib/template.js"></script>
+	</head>
+	<body>
+		<div id="login">
+			<p>账号：<input type="text" id="manager" class="textbox"></p>
+			<p>密码：<input type="password" id="manager" class="textbox"></p>
+		</div>
+		<div id="btn">
+			<a href="#" class="easyui-linkbutton">登录</a>
+		</div>
+	</body>	
+	<script>
+		$(function(){
+			$('#login').dialog({
+				title:'登录后台',
+				width:300,
+				height:180,
+				modal:true,
+				buttons:'#btn',
+			})
+		});
+	</script>
+	
+</html>

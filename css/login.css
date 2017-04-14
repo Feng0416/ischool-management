@@ -1,0 +1,65 @@
+*{margin:0;padding:0;}
+body{margin:0;text-decoration:none;text-align:center;background-color:#f7f7f7;}
+A{color:#777;text-decoration:none;}
+A:hover{color:#000;}
+th{margin:0;font:bold;text-decoration:none;}
+td{margin:0;text-decoration:none;}
+input,textarea{padding:3px;}
+p{margin:10px 0px;}*{margin:0;padding:0;}
+body{margin:0;text-decoration:none;text-align:center;background-color:#f7f7f7;}
+A{color:#777;text-decoration:none;}
+A:hover{color:#000;}
+th{margin:0;font:bold;text-decoration:none;}
+td{margin:0;text-decoration:none;}
+input,textarea{padding:3px;}
+p{margin:10px 0px;}
+ul{margin:0px auto;padding:0px;text-align:left;list-style:none;}
+a,input,select,button{outline:none}
+
+.FL{float:left;clear:left;}
+.FR{float:right;clear:right;}
+.FL0{float:left;}
+.FR0{float:right;}
+.clear{margin:0;padding:0;border:0;clear:both;overflow:hidden;}
+
+.uline{text-decoration:underline;}
+.noline{text-decoration:none;}
+.hr0{height:1px;border:none;border-top:1px solid #aee4e5;}
+.blank4{height:4px;overflow:hidden;}
+.blank7{height:7px;overflow:hidden;}
+.blank10{height:10px;overflow:hidden;}
+.blank20{height:20px;overflow:hidden;}
+
+/*zt*/
+.black.blackB{color:#000;}
+.white,.whiteB{color:#fff}
+.gray,.grayB{color:#666666;}
+.red,.redB{color:#f00;}
+.orange,.orangeB{color:#ff8400;}
+.green,.greenB{color:#2fa007;}
+.blue,.blueB{color:#216caf;}
+.whiteB,.blackB,.grayB,.redB,.orangeB,.greenB,.blueB{font-weight:bold;}
+
+/*btn*/
+.btn,.btnH{margin:0px;width:52px;height:22px;background:#e5f4fd;border:1px solid #6fc6f8;cursor:pointer;color:#216caf;}
+.btnH{background:#66CCFF;}
+
+/*ini*/
+.ini{margin:0px;padding:0px 2px;border:1px solid #49759d;}
+.W140{width:140px;}
+.H22{height:22px;}
+
+.container{margin:0;margin-top:0px;width:100%;height:553px;background:url(../img/back.jpg) #0b4054 no-repeat top center;}
+.loginheader{height:48px;background-color: #f7f7f7;}
+.coreWrap{margin:0 auto;width:885px;position:relative;}
+.loginWrap{width:328px;height:242px;}
+.loginWrap .labText{color:#fff;text-align:left;}
+.loginWrap input:not([type='checkbox']){margin:0;margin-bottom:50px;padding:6px 5px;background-color:#fff;border:1px solid #e6e6e6;width:328px;height:35px;font:normal 16px/35px;color:#000;font-weight: bold;}
+.loginWrap a{display:block;width:328px;height:39px;line-height:39px;font:normal 16px/39px;color:#fff;cursor:pointer;text-decoration:none;}
+.login-body{
+ margin:0;
+ padding:0;
+ text-decoration:none;
+ text-align:center;
+ background-color:#f7f7f7;
+}

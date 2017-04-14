@@ -1,0 +1,7 @@
+{"rows":[  
+    {"productid":"FI-SW-01","name":"玩转Bootstrapstrap（JS插件篇）","jieshao":"xxxxxxxx","type":"公开课","num":70,"status":"上架","zhangjie":"xxx","yaoqinigma":"","teacher":"张三"},  
+    {"productid":"K9-DL-01","name":"在Ubuntu Server下搭建LAMP环境","jieshao":"yyyyyyyyy","type":"公开课","num":50,"status":"下架","zhangjie":"xxxx","yaoqingma":"","teacher":"李四"},  
+    {"productid":"RP-SN-01","name":"iOS开发之Realm数据库","jieshao":"zzzzzzzzz","type":"专属课","num":50,"status":"上架","zhangjie":"xxx","yaoqingma":"aaa","teacher":"王五"},  
+    {"productid":"RP-SN-01","name":"shell编程之正则表达式","jieshao":"aaaaaaaa","type":"专属课","num":80,"status":"下架","zhangjie":"xxxx","yaoqingma":"bbb","teacher":"铁蛋"} 
+    
+]}

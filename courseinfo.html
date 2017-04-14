@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css" />
+		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
+		<link ref="stylesheet" href="lib/easyui/demo/demo.css" />
+		<link ref="stylesheet" href="css/login.css" />
+		<link ref="styleseet" href="css/upload.css"/>
+		<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/template.js"></script>
+		<script type="text/javascript" src="lib/crypto1/crypto/crypto.js"></script>
+		<script type="text/javascript" src="lib/crypto1/hmac/hmac.js"></script>
+		<script type="text/javascript" src="lib/crypto1/sha1/sha1.js"></script>
+		<script type="text/javascript" src="lib/base64.js"></script>
+		<script type="text/javascript" src="lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+	</head>
+	<style>
+		.dialog-button {
+			text-align: center;
+		}
+	</style>
+
+	<body>
+		
+		<div id="courseinfo" class="easyui-datagrid">
+		</div>
+		<!--添加窗口-->
+		<div id="courseadd" title="添加" style="width: 650px; height: 260px; display: none; overflow: hidden;">
+			<input id="id" type="hidden" value="">
+			<form id="userform" style="width: 100%;height: 100%;">
+				<table style="width: 100%; height: 100%; padding: 10px;">
+					<tr>
+						<td align="right">课程名称：</td>
+						<td><input id="name" missingMessage="不能为空" required="true" class="easyui-textbox" style="width: 150px;" maxLength="30" /></td>
+						<td align="right">类型：</td>
+						<td>
+							<input id="type" editable="false" class="easyui-combobox" style="width:150px;" data-options="
+							valueField: 'key',
+							textField: 'value',
+							data: [{
+										key: '1',
+										value: '公开课',
+										selected : true
+									},{
+										key: '2',
+										value: '专属课'
+									}],
+							panelHeight:50,
+							" />
+						</td>
+					</tr>
+					<tr>
+						<td align="right">课程位置：</td>
+						<td>
+							<input id="position" editable="false" class="easyui-combobox" style="width:150px;" data-options="
+							valueField: 'key',
+							textField: 'value',
+							data: [{
+										key: '1',
+										value: '轮播',
+										selected : true
+									},{
+										key: '2',
+										value: '精品'
+									},{
+										key: '3',
+										value: '热门'
+									}],
+							panelHeight:50,
+							" />
+						</td>
+						<td align="right">课程老师：</td>
+						<td><input id="name" class="easyui-textbox" style="width: 150px;" /></td>
+					</tr>
+					
+					<tr>
+						<td align="right">课程介绍：</td>
+						<td><input id="notice" class="easyui-textbox" style="width: 250px;" /></td>
+					</tr>
+					<tr>
+						<td align="right">课程图片：</td>
+						<td>
+							<div id="container">
+			<a id="selectfiles" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择图片</a>
+			<!--<a id="selectfile" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择文件</a>-->
+			<a id="postfiles" href="javascript:void(0);" class='easyui-linkbutton'>开始上传</a>
+		</div>
+							<div id="ossfile"></div>
+						</td>
+					</tr>
+					<tr class="savebtn">
+						<td colspan="4" align="center">
+							<a href="#" id="savetask" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width: 80px" onclick="save()">保存</a>
+							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
+						</td>
+					</tr>
+					
+				</table>
+			</form>
+		</div>
+	</body>
+	<script>
+	var datascope = {};
+		var accessid= 'LTAI4TPzfMR4o0ic';
+		var accesskey= 'eWjyDSHLQFSa6vA6tSoCWXSoFed0WC';
+		var host = 'http://files.jxufe-ischool.top';
+		var g_dirname = '';
+		var g_object_name = '';
+		var g_object_name_type = 'random_name';
+		var policyText = {
+    "expiration": "2020-01-01T12:00:00.000Z", //设置该Policy的失效时间，超过这个失效时间之后，就没有办法通过这个policy上传文件了
+    "conditions": [
+    ["content-length-range", 0, 1048576000] // 设置上传文件的大小限制
+    ]
+};
+
+var policyBase64 = Base64.encode(JSON.stringify(policyText))
+message = policyBase64
+var bytes = Crypto.HMAC(Crypto.SHA1, message, accesskey, { asBytes: true }) ;
+var signature = Crypto.util.bytesToBase64(bytes);
+
+function check_object_radio() {
+    var tt = document.getElementsByName('myradio');
+    for (var i = 0; i < tt.length ; i++ )
+    {
+        if(tt[i].checked)
+        {
+            g_object_name_type = tt[i].value;
+            break;
+        }
+    }
+}
+
+function get_dirname()
+{
+    //dir = document.getElementById("dirname").value;
+  //  if (dir != '' && dir.indexOf('/') != dir.length - 1)
+   // {
+  //      dir = dir + '/'
+ //   }
+      
+	  //指定目录位置
+     dir = "images" + '/';
+    g_dirname = dir;
+	   
+}
+
+function random_string(len) {
+　　len = len || 32;
+　　var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';   
+　　var maxPos = chars.length;
+　　var pwd = '';
+　　for (i = 0; i < len; i++) {
+    　　pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+}
+
+function get_suffix(filename) {
+    pos = filename.lastIndexOf('.')
+    suffix = ''
+    if (pos != -1) {
+        suffix = filename.substring(pos)
+    }
+    return suffix;
+}
+
+function calculate_object_name(filename)
+{
+	//强制使用随机名字
+	//g_object_name_type = 'random_name';
+    if (g_object_name_type == 'local_name')
+    {
+        g_object_name +="${filename}"
+    }
+    else if (g_object_name_type == 'random_name')
+    {
+        suffix = get_suffix(filename)
+        g_object_name = g_dirname + random_string(10) + suffix
+    }
+    return ''
+}
+
+function get_uploaded_object_name(filename)
+{
+	 
+    if (g_object_name_type == 'local_name')
+    {
+        tmp_name = g_object_name
+        tmp_name = tmp_name.replace("${filename}", filename);
+        return tmp_name
+    }
+    else if(g_object_name_type == 'random_name')
+    {
+        return g_object_name
+    }
+
+		
+}
+
+function set_upload_param(up, filename, ret)
+{
+    g_object_name = g_dirname;
+    if (filename != '') {
+        suffix = get_suffix(filename)
+        calculate_object_name(filename)
+    }
+    new_multipart_params = {
+        'key' : g_object_name,
+        'policy': policyBase64,
+        'OSSAccessKeyId': accessid, 
+        'success_action_status' : '200', //让服务端返回200,不然，默认会返回204
+        'signature': signature,
+    };
+
+    up.setOption({
+        'url': host,
+        'multipart_params': new_multipart_params
+    });
+
+    up.start();
+}
+
+var uploader = new plupload.Uploader({
+	filters: {
+  mime_types : [ //只允许上传图片
+    { title : "image files", extensions : "png,jpg,jpeg,gif" }
+   
+	]},
+	runtimes : 'html5,flash,silverlight,html4',
+	browse_button : 'selectfiles', 
+    //multi_selection: false,
+	container: document.getElementById('container'),
+	flash_swf_url : 'lib/plupload-2.1.2/js/Moxie.swf',
+	silverlight_xap_url : 'lib/plupload-2.1.2/js/Moxie.xap',
+    url : 'http://oss.aliyuncs.com',
+
+	init: {
+		PostInit: function() {
+			document.getElementById('ossfile').innerHTML = '';
+			document.getElementById('postfiles').onclick = function() {
+            set_upload_param(uploader, '', false);
+            return false;
+			};
+		},
+
+		FilesAdded: function(up, files) {
+			plupload.each(files, function(file) {
+				document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
+				+'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
+				+'</div>';
+			});
+		},
+
+		BeforeUpload: function(up, file) {
+            check_object_radio();
+            get_dirname();
+            set_upload_param(up, file.name, true);
+        },
+
+		UploadProgress: function(up, file) {
+			var d = document.getElementById(file.id);
+			d.getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+            var prog = d.getElementsByTagName('div')[0];
+			var progBar = prog.getElementsByTagName('div')[0]
+			progBar.style.width= 2*file.percent+'px';
+			progBar.setAttribute('aria-valuenow', file.percent);
+		},
+
+		FileUploaded: function(up, file, info) {
+            if (info.status == 200)
+            {	
+            	console.log(info);
+            	console.log(get_uploaded_object_name(file.name));
+            	var filepath = get_uploaded_object_name(file.name);
+                document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功';
+              	var path;
+              	path = host + '/' +filepath;
+              	datascope.filepath = path;
+            }
+            else
+            {
+                document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = info.response;
+            } 
+		},
+
+		Error: function(up, err) {
+			document.getElementById('console').appendChild(document.createTextNode("\nError xml:" + err.response));
+		}
+	}
+});
+
+uploader.init();
+
+		$(function() {
+			initgrid();
+		})
+
+		function initgrid() {
+			$.ajax({
+				type: "get",
+				url: "https://www.jxufe-ischool.top/course/queryall/16",
+				async: false,
+				dataType: 'jsonp',
+				success: function(data) {
+					console.log(data.params);
+					$('#courseinfo').datagrid('loadData', data.params);
+				}
+			});
+		}
+		$(document).ready(function() {
+			$('#courseinfo').datagrid({
+				width: '100%',
+				heigth: "auto",
+				striped: true,
+				fitColumns: true,
+				fit: true,
+				toolbar: [{
+					text: '添加',
+					iconCls: 'icon-add',
+					handler: function() {
+						openaddpanel('添加');
+					}
+
+				}, '-', {
+					text: '修改',
+					iconCls: 'icon-edit',
+					handler: function() {
+						var editRow = $('#courseinfo').datagrid('getChecked');
+						console.log(editRow);
+						if(editRow == "") {
+							$.messager.alert('提示消息', "请选择要修改的数据", 'info');
+							return false;
+						}else{
+							
+						}
+					}
+				}, '-', {
+					text: '删除',
+					iconCls: 'icon-remove',
+					handler: function() {
+						var editRow = $('#courseinfo').datagrid('getChecked');
+						console.log(editRow[0].id);
+						$.ajax({
+							type:"get",
+							url:"https://www.jxufe-ischool.top/course/delete/"+editRow[0].id,
+							async:false,
+							dataType:'jsonp',
+							success : function(data){
+								console.log(data);
+								refresh();
+								if(data.resStatus == 200) {
+									
+									$.messager.alert('提示消息', "删除成功", 'info');
+									
+								} else {
+									$.messager.alert('提示消息', data.resMsg, 'info');
+								}
+							}
+						});
+					}
+				}],
+				columns: [
+					[{
+
+						field: 'ck',
+						checkbox: true
+
+					}, {
+						field: 'name',
+						title: '课程名称',
+						width: 100
+
+					}, {
+						field: 'notice',
+						title: '课程介绍',
+						width: 150
+					}, {
+						field: 'type',
+						title: '课程类型',
+						width: 70,
+						formatter: function(value, rec) {
+							return rec.type == '1' ? '公开课' :
+								rec.type == '2' ? '专属课' : '未知';
+						},
+						sortable: false
+					}, {
+						field: 'stuNum',
+						title: '参与人数',
+						width: 50
+					}, {
+						field: 'state',
+						title: '上架/下架',
+						width: 50,
+						formatter: function(value, rec) {
+							return rec.state == '0' ? '下架' :
+								rec.state == '1' ? '上架' : '未知';
+						},
+						sortable: false
+					}, {
+						field: 'position',
+						title: '课程位置',
+						width: 100,
+						formatter: function(value, rec) {
+							return rec.position == '1' ? '轮播' :
+								rec.position == '2' ? '精品' :
+								rec.position == '3' ? '热门' : '未知';
+						},
+						sortable: false
+					}, {
+						field: 'inviteCode',
+						title: '专属课邀请码',
+						width: 100
+					}, {
+						field: 'teacherId',
+						title: '主讲老师',
+						width: 50
+					}]
+				]
+			})
+		})
+		function save(){
+			if(!$("#userform").form('validate')) {
+				return false;
+			}else{
+				$.ajax({
+					type:"get",
+					url:"https://www.jxufe-ischool.top/course/create",
+					async:false,
+					dataType:'jsonp',
+					data:{
+						name:$('#name').textbox('getText').trim(),
+						imageUrl:datascope.filepath,
+						type:$('#type').combobox('getValue').trim(),
+						position:$('#position').combobox('getValue').trim(),
+						state:1,
+						notice:$('#notice').textbox('getText').trim(),
+						teacherId:16
+					},
+					success: function(data){
+						console.log(data);
+						$('#courseadd').window('close');
+						refresh();
+					}
+				});
+			}
+		}
+		function refresh(){
+			$.ajax({
+				type: "get",
+				url: "https://www.jxufe-ischool.top/course/queryall/16",
+				async: false,
+				dataType: 'jsonp',
+				success: function(data) {
+					console.log(data.params);
+					$('#courseinfo').datagrid('loadData', data.params);
+				}
+			});
+		}
+		function cancel(){
+			$('#courseadd').window('close');
+			selectnother();
+		}
+		function selectnother(){
+			$('#courseadd').datagrid("unselectAll");
+		}
+		function openaddpanel(data) {
+			$('#courseadd').window({
+				modal: true,
+				resizable: false,
+				minimizable: false,
+				maximizable: false,
+				left: ($(window).width() - 650) * 0.5,
+				top: 80,
+				title: data
+			}, 'open');
+			$('#courseadd').css({
+				'display': ''
+			});
+		}
+	</script>
+
+</html>

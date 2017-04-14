@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css" />
+		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
+		<link ref="stylesheet" href="lib/easyui/demo/demo.css" />
+		<link ref="stylesheet" href="css/login.css" />
+		<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/template.js"></script>
+		<style type="text/css">
+			.titleleft * {
+				vertical-align: middle;
+			}
+		</style>
+	</head>
+
+	<body class="easyui-layout">
+		<div data-options="region:'north',title:'North Title',split:true,noheader:true" style="height:30px;background-color:#0073E6 ;float: left;margin-top: 4px;"class="titleleft">
+			<img src="img/guanli.png" style="height: 14px;width: 14px;margin-left: 8px;"/>
+				<span style="font-size: 12px;color: #fff;">后台管理</span>
+				<span style="color: rgba(255,254,254,.6);font-size: 12px;">ISchool Management</span>
+		</div>
+		<!--<div data-options="region:'south',title:'South Title',split:true,noheader:true" style="height:35px;text-align: center;">
+			ischool后台管理
+		</div>-->
+
+		<div data-options="region:'west',title:'导航',split:true,iconCls:'icon-world'" style="width:180px;padding: 10px;">
+			<ul id='nav'></ul>
+		</div>
+		<div data-options="region:'center'" style="height: 100%;background-image: url(img/CenterBG.png);background-size:cover;">
+			<div id="tabs">
+
+			</div>
+		</div>
+	</body>
+	<script>
+		$(function() {
+			$('#tabs').tabs({
+				fit: true
+			})
+		});
+		$(function() {
+			$('#nav').tree({
+				url: 'data/adminmenu.json',
+				method: 'get',
+				onClick: function(node) {
+
+					if(node.url) {
+						var title = node.text;
+						if($('#tabs').tabs('exists', title)) {
+							$('#tabs').tabs('select', title)
+						} else {
+							$('#tabs').tabs('add', {
+								title: title,
+								content: '<iframe name="' + title + '" id="' + 'nav' + '" src="' + node.url + '" width="100%" height="100%" frameborder="0" scrolling="auto" ></iframe>',
+								closable: true,
+								
+							})
+						}
+
+					}
+				}
+
+			})
+		});
+	</script>
+
+</html>

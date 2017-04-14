@@ -1,0 +1,84 @@
+[
+    {
+        "id": 1,
+        "parentId": 0,
+        "url": "javascript:void(0)",
+        "text": "课程管理",
+        "checked": false,
+        "state": "open",
+        "children": [
+            {
+                "id": 11,
+                "parentId": 1,
+                "url": "courseinfo.html",
+                "text": "课程信息管理",
+                "checked": false,
+                "state": null,
+                "children": []
+            },
+            {
+                "id": 12,
+                "parentId": 1,
+                "url": "sections.html",
+                "text": "课程章节管理",
+                "checked": false,
+                "state": null,
+                "children": []
+            },
+            {
+                "id": 12,
+                "parentId": 1,
+                "url": "courseFile.html",
+                "text": "课程文件管理",
+                "checked": false,
+                "state": null,
+                "children": []
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "parentId": 0,
+        "url": "javascript:void(0)",
+        "text": "学生管理",
+        "checked": false,
+        "state": "closed",
+        "children": [{
+                "id": 21,
+                "parentId": 2,
+                "url": "stuCourseManage.html",
+                "text": "学生信息管理",
+                "checked": false,
+                "state": null,
+                "children": []
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "parentId": 0,
+        "url": "javascript:void(0)",
+        "text": "作业管理",
+        "checked": false,
+        "state": "closed",
+        "children": [{
+                "id": 31,
+                "parentId": 3,
+                "url": "person-menu.html",
+                "text": "作业信息管理",
+                "checked": false,
+                "state": null,
+                "children": []
+            },{
+                "id": 32,
+                "parentId": 3,
+                "url": "src/jbda/unit-menu.html",
+                "text": "作业答案管理",
+                "checked": false,
+                "state": null,
+                "children": []
+            }
+        ]
+    }
+    
+]

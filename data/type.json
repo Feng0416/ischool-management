@@ -1,0 +1,13 @@
+[
+	{
+		"id": 1,
+		"text": "公开课",
+		"state": "close",
+		"children":[]
+	},{
+		"id": 2,
+		"text": "专属课",
+		"state": "close",
+		"children":[]
+	}
+]

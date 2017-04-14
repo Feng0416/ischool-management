@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css" />
+		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
+		<link ref="stylesheet" href="lib/easyui/demo/demo.css" />
+		<link ref="stylesheet" href="css/login.css" />
+		<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/template.js"></script>
+	</head>
+
+	<body class="easyui-layout">
+		
+
+		<div data-options="region:'west',title:'我的课程',split:true,iconCls:''" style="width:180px;padding: 10px;">
+			<ul id='nav'></ul>
+		</div>
+		<div data-options="region:'center'" style="padding:5px;background:#eee;">
+			<div id="course">
+
+			</div>
+		</div>
+	</body>
+	<script>
+	var datascope={};
+	var cookieLogin = $.cookie('loginUser');
+			var cookieJson = JSON.parse(cookieLogin);
+			var loginid = cookieJson.params.user.id;
+			console.log(loginid);
+		$(function() {
+			$('#tabs').tabs({
+				fit: true
+			})
+			initTree();
+			
+			$('#course').datagrid({
+				width: '100%',
+				heigth: "auto",
+				striped: true,
+				fitColumns: true,
+				rownumbers:true,
+				fit: true
+				
+			})
+		});
+		
+		function initTree() {
+			
+			$.ajax({
+				type:"get",
+				url:"https://www.jxufe-ischool.top/course/queryTeacherCourses/"+loginid,
+				async:false,
+				dataType: "jsonp",
+				data:{
+					
+				},
+				success:function(data){
+					console.log(data.params);
+					var datajson = selectData(data.params.rows);
+					$("#nav").tree({
+						data: datajson,
+						lines: true,
+						onClick:function (node) {
+							console.log(node.id)
+							datascope.courseid = node.id;
+							$.ajax({
+								type:"get",
+								url:"https://www.jxufe-ischool.top/course/queryCourseStudents/"+node.id,
+								async:false,
+								dataType: "jsonp",
+								success:function(data){
+									console.log(data);
+									if(data.resStatus==200){
+										$('#course').datagrid('loadData', data.params.rows);
+									}else if(data.resStatus==405){
+										$('#course').datagrid('loadData', []);
+									}
+									
+									
+									
+									
+								}
+							});
+						}
+					})
+				}
+			});
+		}
+		$(document).ready(function() {
+			$('#course').datagrid({
+				width: '100%',
+				heigth: "auto",
+				striped: true,
+				fitColumns: true,
+				fit: true,
+				toolbar: [{
+					text: '通过',
+						iconCls: 'icon-tongguo',
+						handler: function() {
+							var editRow = $('#course').datagrid('getChecked');
+							console.log(editRow[0].id)
+							
+							if(editRow[0].state==0 || editRow[0].state == 2){
+								$.ajax({
+									type:"get",
+									url:"https://www.jxufe-ischool.top/course/allowStuToClass/"+datascope.courseid+"/"+editRow[0].id,
+									async:false,
+									dataType:'jsonp',
+									success:function(data){
+										console.log(data);
+									
+									}
+								});
+							}else if(editRow[0].state==1){
+								$.messager.alert('警告操作！','该学生已通过审核','warning');
+							}
+						}
+				}, '-', {
+						text: '拒绝',
+						iconCls: 'icon-refuse',
+						handler: function() {
+							var editRow = $('#course').datagrid('getChecked');
+							if(editRow[0].state==1 || editRow[0].state==0){
+								$.ajax({
+									type:"get",
+									url:"https://www.jxufe-ischool.top/course/refulseStuToclass/5/"+editRow[0].id,
+									async:false,
+									dataType:'jsonp',
+									success:function(data){
+										console.log(data);
+									}
+								});
+							}else if(editRow[0].state==2){
+								$.messager.alert('警告操作！','该学生已被拒绝','warning');
+							}
+						}
+				},'-', {
+						text: '删除',
+						iconCls: 'icon-remove',
+						handler: function() {
+							var editRow = $('#course').datagrid('getChecked');
+							console.log(editRow[0].id);
+							$.ajax({
+								type:"get",
+								url:"https://www.jxufe-ischool.top/course/deleteStufromClass/5/"+editRow[0].id,
+								async:false,
+								dataType:'jsonp',
+								success:function(data){
+									console.log(data);
+								}
+							});
+						}
+					}
+				
+				],columns: [
+					[{
+
+						field: 'ck',
+						checkbox: true
+
+					}, {
+						field: 'name',
+						title: '学生名称',
+						width: 70
+					}, {
+						field: 'email',
+						title: '邮箱',
+						width: 200
+					}, {
+						field: 'state',
+						title: '审核状态',
+						width: 50,
+						formatter : function(value, rec) {
+								return rec.state == '0' ? '待审核'
+										: rec.state == '1' ? '通过'
+										: rec.state == '2' ? '拒绝':'未知';
+							},
+							sortable:true
+						
+						
+					}]
+				]
+				
+			})
+		})
+		function selectData(data) {
+				var datajson = [];
+				for(var i = 0; i < data.length; i++) {
+					var state = "";
+				//	data[i].next == "0" ? state = "closed" : state = "open";
+					datajson.push({
+						"id": data[i].id,
+						"text": data[i].name,
+						
+					})
+				}
+				return datajson;
+			}
+	</script>
+
+</html>
