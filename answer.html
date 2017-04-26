@@ -8,86 +8,73 @@
 		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
 		<link ref="stylesheet" href="lib/easyui/demo/demo.css" />
 		<link ref="stylesheet" href="css/login.css" />
-		<link ref="styleseet" href="css/upload.css"/>
 		<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
 		<script src="lib/template.js"></script>
+
 		<script type="text/javascript" src="lib/crypto1/crypto/crypto.js"></script>
 		<script type="text/javascript" src="lib/crypto1/hmac/hmac.js"></script>
 		<script type="text/javascript" src="lib/crypto1/sha1/sha1.js"></script>
 		<script type="text/javascript" src="lib/base64.js"></script>
+		<script type="text/javascript" src="js/base64.js"></script>
 		<script type="text/javascript" src="lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+		<script type="text/javascript" src="js/upload.js"></script>
 	</head>
-	<style>
-		.dialog-button {
-			text-align: center;
-		}
-	</style>
 
-	<body>
-		
-		<div id="courseinfo" class="easyui-datagrid">
+	<body class="easyui-layout">
+
+		<div data-options="region:'center'" title: '我的作业' style="padding:5px;background:#eee;">
+
+			<div id="homework">
+
+			</div>
+
 		</div>
-		<!--添加窗口-->
-		<div id="courseadd" title="添加" style="width: 650px; height: 260px; display: none; overflow: hidden;">
+		
+		<div id="answer" title="答题" style="width: 750px; height: 500px; display: none; overflow: hidden;">
 			<input id="id" type="hidden" value="">
-			<form id="userform" style="width: 100%;height: 100%;">
-				<table style="width: 100%; height: 100%; padding: 10px;">
-					<tr>
-						<td align="right">课程名称：</td>
-						<td><input id="name" missingMessage="不能为空" required="true" class="easyui-textbox" style="width: 150px;" maxLength="30" /></td>
-						<td align="right">类型：</td>
-						<td>
-							<input id="type" editable="false" class="easyui-combobox" style="width:150px;" data-options="
-							valueField: 'key',
-							textField: 'value',
-							data: [{
-										key: '1',
-										value: '公开课',
-										selected : true
-									},{
-										key: '2',
-										value: '专属课'
-									}],
-							panelHeight:50,
-							" />
-						</td>
-					</tr>
-					<tr>
-						
-						<td align="right">课程老师：</td>
-						<td><input id="name" class="easyui-textbox" style="width: 150px;" /></td>
-					</tr>
+			<form id="answerform" style="width: 100%;height: 100%;">
+
+				<table style="width: 100%;padding: 10px;height: 300px;">
 					
 					<tr>
-						<td align="right">课程介绍：</td>
-						<td><input id="notice" class="easyui-textbox" style="width: 250px;" /></td>
+						<td align="right">答题内容：</td>
+						<td><textarea id="content" missingMessage="不能为空" required="true"  style="width: 400px; height: 300px;"></textarea></td>
 					</tr>
+					
+					
+
 					<tr>
-						<td align="right">课程图片：</td>
+						<td align="right">答题资料：</td>
 						<td>
 							<div id="container">
-			<a id="selectfiles" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择图片</a>
-			<!--<a id="selectfile" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择文件</a>-->
-			<a id="postfiles" href="javascript:void(0);" class='easyui-linkbutton'>开始上传</a>
-		</div>
+								<a id="selecthomeworkPic" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择资料</a>
+								<a id="postfiles" href="javascript:void(0);" class='easyui-linkbutton'>开始上传</a>
+							</div>
 							<div id="ossfile"></div>
 						</td>
 					</tr>
+					
+					
+					
+
 					<tr class="savebtn">
 						<td colspan="4" align="center">
 							<a href="#" id="savetask" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width: 80px" onclick="save()">保存</a>
 							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
 						</td>
 					</tr>
-					
+
 				</table>
 			</form>
 		</div>
+		
 	</body>
 	<script>
-	var datascope = {};
+		var datascope = {};
+		var stuId = '';
+		var stuName = '';
 		var accessid= 'LTAI4TPzfMR4o0ic';
 		var accesskey= 'eWjyDSHLQFSa6vA6tSoCWXSoFed0WC';
 		var host = 'http://files.jxufe-ischool.top';
@@ -100,8 +87,7 @@
     ["content-length-range", 0, 1048576000] // 设置上传文件的大小限制
     ]
 };
-
-var policyBase64 = Base64.encode(JSON.stringify(policyText))
+	var policyBase64 = Base64.encode(JSON.stringify(policyText))
 message = policyBase64
 var bytes = Crypto.HMAC(Crypto.SHA1, message, accesskey, { asBytes: true }) ;
 var signature = Crypto.util.bytesToBase64(bytes);
@@ -127,7 +113,13 @@ function get_dirname()
  //   }
       
 	  //指定目录位置
-     dir = "images" + '/';
+     var filetype = datascope.filetype;
+			
+			if(filetype=='png' || filetype=='jpg' || filetype=='gif' || filetype=='jpeg'){
+				dir = "images" + '/';
+			}else if(filetype=='doc' || filetype=='docx' || filetype=='pdf' || filetype=='xlsx' || filetype=='xls' || filetype=='ppt'){
+				dir = "files" + '/';
+			}
     g_dirname = dir;
 	   
 }
@@ -210,12 +202,12 @@ function set_upload_param(up, filename, ret)
 
 var uploader = new plupload.Uploader({
 	filters: {
-  mime_types : [ //只允许上传图片
-    { title : "image files", extensions : "png,jpg,jpeg,gif" }
+  mime_types : [ 
+    { title : "files", extensions : "png,jpg,jpeg,gif,doc,pdf,ppt,docx,xls,xlsx" }
    
 	]},
 	runtimes : 'html5,flash,silverlight,html4',
-	browse_button : 'selectfiles', 
+	browse_button :  ["selecthomeworkPic"],
     //multi_selection: false,
 	container: document.getElementById('container'),
 	flash_swf_url : 'lib/plupload-2.1.2/js/Moxie.swf',
@@ -229,6 +221,7 @@ var uploader = new plupload.Uploader({
             set_upload_param(uploader, '', false);
             return false;
 			};
+			
 		},
 
 		FilesAdded: function(up, files) {
@@ -236,6 +229,10 @@ var uploader = new plupload.Uploader({
 				document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
 				+'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
 				+'</div>';
+				var filename = file.name;
+				var str = filename.split(".");
+				var filename1 = str[1];
+				datascope.filetype = filename1;
 			});
 		},
 
@@ -257,13 +254,22 @@ var uploader = new plupload.Uploader({
 		FileUploaded: function(up, file, info) {
             if (info.status == 200)
             {	
-            	console.log(info);
-            	console.log(get_uploaded_object_name(file.name));
+          
+            	
             	var filepath = get_uploaded_object_name(file.name);
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功';
               	var path;
               	path = host + '/' +filepath;
+              	
               	datascope.filepath = path;
+              	var filetype = datascope.filetype;
+              	if(filetype=='png' || filetype=='jpg' || filetype=='gif' || filetype=='jpeg'){
+				datascope.homeworkImgpath = host + '/' +filepath;
+				
+			}else if(filetype=='doc' || filetype=='docx' || filetype=='pdf' || filetype=='xlsx' || filetype=='xls' || filetype=='ppt'){
+				datascope.homeworkFilepath = host + '/' +filepath;
+			}
+			console.log(datascope.filepath)
             }
             else
             {
@@ -278,171 +284,123 @@ var uploader = new plupload.Uploader({
 });
 
 uploader.init();
-
+		if($.cookie('loginStu')) {
+			stuId = $.parseJSON($.cookie('loginStu')).id;
+			answerName = $.parseJSON($.cookie('loginStu')).name;
+		}
 		$(function() {
-			initgrid();
+			initTree();
+
 		})
 
-		function initgrid() {
+		function initTree() {
 			$.ajax({
 				type: "get",
-				url: "https://www.jxufe-ischool.top/course/queryall/16",
+				url: "https://www.jxufe-ischool.top/course/queryMyHomeWork/" + stuId,
 				async: false,
 				dataType: 'jsonp',
 				success: function(data) {
-					console.log(data.params);
-					$('#courseinfo').datagrid('loadData', data.params);
+
+					console.log(data.params.rows)
+					$('#homework').datagrid('loadData', data.params.rows);
+
 				}
 			});
 		}
+
 		$(document).ready(function() {
-			$('#courseinfo').datagrid({
+			$('#homework').datagrid({
 				width: '100%',
 				heigth: "auto",
 				striped: true,
 				fitColumns: true,
 				fit: true,
 				toolbar: [{
-					text: '添加',
+					text: '答题',
 					iconCls: 'icon-add',
 					handler: function() {
-						openaddpanel('添加');
-					}
-
-				}, '-', {
-					text: '修改',
-					iconCls: 'icon-edit',
-					handler: function() {
-						var editRow = $('#courseinfo').datagrid('getChecked');
-						console.log(editRow);
-						if(editRow == "") {
-							$.messager.alert('提示消息', "请选择要修改的数据", 'info');
+						var editRow = $('#homework').datagrid('getChecked');
+						if(editRow[0].answerState==1){
+							$.messager.alert('提示消息', "您的答案已通过，请不要重复提交", 'info');
 							return false;
-						}else{
-							
 						}
-					}
-				}, '-', {
-					text: '删除',
-					iconCls: 'icon-remove',
-					handler: function() {
-						var editRow = $('#courseinfo').datagrid('getChecked');
-						console.log(editRow[0].id);
-						$.ajax({
-							type:"get",
-							url:"https://www.jxufe-ischool.top/course/delete/"+editRow[0].id,
-							async:false,
-							dataType:'jsonp',
-							success : function(data){
-								console.log(data);
-								refresh();
-								if(data.resStatus == 200) {
-									
-									$.messager.alert('提示消息', "删除成功", 'info');
-									
-								} else {
-									$.messager.alert('提示消息', data.resMsg, 'info');
-								}
+						if(editRow == ""){
+							$.messager.alert('提示消息', "请选择作业答题", 'info');
+							return false;
+						}if(editRow.length>1){
+							$.messager.alert('提示消息', "请选择一条作业答题", 'info');
+							return false;
+						}
+						else{
+							console.log(editRow[0])
+							datascope.homeworkName = editRow[0].homeworkName;
+							datascope.homeworkId = editRow[0].homeworkId;
+							var completeTime = editRow[0].completeTime;
+							var sysTime = getNowFormatDate(); //当前系统时间
+							var a = comTime(completeTime,sysTime);
+							if(a>0){
+								$.messager.alert('提示消息', "答题时间已过", 'info');
+								return false;
 							}
-						});
+							openaddpanel('答题');
+						}
+						
+						
 					}
-				}],
+				}, ],
 				columns: [
 					[{
-
 						field: 'ck',
 						checkbox: true
-
 					}, {
-						field: 'name',
+						field: 'courseName',
 						title: '课程名称',
 						width: 100
-
 					}, {
-						field: 'notice',
-						title: '课程介绍',
-						width: 150
-					}, {
-						field: 'type',
-						title: '课程类型',
-						width: 70,
-						formatter: function(value, rec) {
-							return rec.type == '1' ? '公开课' :
-								rec.type == '2' ? '专属课' : '未知';
-						},
-						sortable: false
-					}, {
-						field: 'stuNum',
-						title: '参与人数',
-						width: 50
-					}, {
-						field: 'state',
-						title: '上架/下架',
-						width: 50,
-						formatter: function(value, rec) {
-							return rec.state == '0' ? '下架' :
-								rec.state == '1' ? '上架' : '未知';
-						},
-						sortable: false
-					},  {
-						field: 'inviteCode',
-						title: '专属课邀请码',
+						field: 'homeworkName',
+						title: '作业标题',
 						width: 100
 					}, {
-						field: 'teacherId',
-						title: '主讲老师',
-						width: 50
+						field: 'homeworkContent',
+						title: '作业内容',
+						width: 300
+					}, {
+						field: 'completeTime',
+						title: '完成时间',
+						width: 100
+					}, {
+						field: 'answerState',
+						title: '完成情况',
+						width: 100,
+						formatter: function(value, rec) {
+							return rec.answerState == '0' ? '不通过' :
+								rec.answerState == '1' ? '通过' :
+								rec.answerState == '2' ? '未做' :
+								rec.answerState == '3' ? '待批改' : '未知';
+						},
+						sortable: true
 					}]
 				]
 			})
 		})
-		function save(){
-			if(!$("#userform").form('validate')) {
-				return false;
-			}else{
-				$.ajax({
-					type:"get",
-					url:"https://www.jxufe-ischool.top/course/create",
-					async:false,
-					dataType:'jsonp',
-					data:{
-						name:$('#name').textbox('getText').trim(),
-						imageUrl:datascope.filepath,
-						type:$('#type').combobox('getValue').trim(),
-						
-						state:1,
-						notice:$('#notice').textbox('getText').trim(),
-						teacherId:16
-					},
-					success: function(data){
-						console.log(data);
-						$('#courseadd').window('close');
-						refresh();
-					}
-				});
+
+		function selectData(data) {
+			var datajson = [];
+			for(var i = 0; i < data.length; i++) {
+				var state = "";
+				//	data[i].next == "0" ? state = "closed" : state = "open";
+				datajson.push({
+					"id": data[i].homeworkId,
+					"text": data[i].homeworkName,
+
+				})
 			}
-		}
-		function refresh(){
-			$.ajax({
-				type: "get",
-				url: "https://www.jxufe-ischool.top/course/queryall/16",
-				async: false,
-				dataType: 'jsonp',
-				success: function(data) {
-					console.log(data.params);
-					$('#courseinfo').datagrid('loadData', data.params);
-				}
-			});
-		}
-		function cancel(){
-			$('#courseadd').window('close');
-			selectnother();
-		}
-		function selectnother(){
-			$('#courseadd').datagrid("unselectAll");
+			return datajson;
 		}
 		function openaddpanel(data) {
-			$('#courseadd').window({
+
+			
+			$('#answer').window({
 				modal: true,
 				resizable: false,
 				minimizable: false,
@@ -450,10 +408,70 @@ uploader.init();
 				left: ($(window).width() - 650) * 0.5,
 				top: 80,
 				title: data
+
 			}, 'open');
-			$('#courseadd').css({
+			$('#answer').css({
 				'display': ''
 			});
+		}
+
+		function getNowFormatDate() {
+			var date = new Date();
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1;
+			var strDate = date.getDate();
+			if(month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if(strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + date.getHours() + seperator2 + date.getMinutes() +
+				seperator2 + date.getSeconds();
+			return currentdate;
+		}
+		function comTime(completeTime,sysTime){
+			 var completeTime1 = completeTime.substring(0,10).split('-');
+			 var sysTime1 = sysTime.substring(0,10).split('-');
+			 completeTime = completeTime1[1]+'-'+completeTime1[2]+'-'+completeTime1[0]+''+completeTime.substring(10,19);
+			 sysTime = sysTime1[1]+'-'+sysTime1[2]+'-'+sysTime1[0]+''+sysTime.substring(10,19); 
+			 var a = (Date.parse(sysTime)-Date.parse(completeTime))/3600/1000;
+			 return a;
+		}
+		function save(){
+			var answer_file = datascope.filepath;
+		
+			var answercontent = $('#content').val();
+			var homeworkName = datascope.homeworkName;
+			var homeworkId = datascope.homeworkId;
+			console.log(answer_file)
+			if(!$("#answerform").form('validate')) {
+				return false;
+			}else{
+				$.ajax({
+					type:"get",
+					url:"https://www.jxufe-ischool.top/course/commitHomework",
+					async:false,
+					dataType:'jsonp',
+					data:{
+						homeworkName:homeworkName,
+						answerContent:answercontent,
+						answerFile:answer_file,
+						answerUserId:stuId,
+						answerUserName:answerName,
+						homeworkId:homeworkId,
+						
+					},
+					success :function(data){
+						console.log(data)
+					}
+				});
+			}
+		}
+		function cancel(){
+			$('#answer').window('close');
 		}
 	</script>
 

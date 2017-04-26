@@ -4,7 +4,6 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
-		<meta charset="UTF-8">
 		<title></title>
 		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css" />
 		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
@@ -141,7 +140,7 @@
 
 			//指定目录位置
 			var filetype = datascope.filetype;
-			
+			var dir='';
 			if(filetype=='mp4' || filetype=='avi' || filetype=='rmvb'){
 				dir = "videos" + '/';
 			}else if(filetype=='doc' || filetype=='docx' || filetype=='pdf' || filetype=='xlsx'){

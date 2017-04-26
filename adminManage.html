@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css" />
+		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
+		<link ref="stylesheet" href="lib/easyui/demo/demo.css" />
+		<link ref="stylesheet" href="css/login.css" />
+		<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/template.js"></script>
+
+		<script type="text/javascript" src="lib/crypto1/crypto/crypto.js"></script>
+		<script type="text/javascript" src="lib/crypto1/hmac/hmac.js"></script>
+		<script type="text/javascript" src="lib/crypto1/sha1/sha1.js"></script>
+		<script type="text/javascript" src="lib/base64.js"></script>
+		<script type="text/javascript" src="js/base64.js"></script>
+		<script type="text/javascript" src="lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+		<script type="text/javascript" src="js/upload.js"></script>
+	</head>
+	<body class="easyui-layout">
+		<div data-options="region:'center'" title: '课程信息' style="padding:5px;background:#eee;">
+
+			<div id="course">
+
+			</div>
+
+		</div>
+		<div id="coursePosition" title="修改课程位置" style="width: 500px; height: 300px; display: none; overflow: hidden;">
+			<input id="id" type="hidden" value="">
+			<form id="courseForm" style="width: 100%;height: 100%;">
+
+				<table style="width: 100%;padding: 10px;height: 300px;">
+					
+					<tr>
+						<td align="right">课程位置：</td>
+						<td>
+							<input id="position" editable="false" class="easyui-combobox" style="width:150px;" data-options="
+							valueField: 'key',
+							textField: 'value',
+							data: [{
+										key: '1',
+										value: '轮播',
+										selected : true
+									},{
+										key: '2',
+										value: '精品'
+									},{
+										key: '3',
+										value: '热门'
+									}],
+							panelHeight:50,
+							" />
+						</td>
+						
+					</tr>
+					
+					
+					
+
+					<tr class="savebtn">
+						<td colspan="4" align="center">
+							<a href="#" id="savetask" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width: 80px" onclick="save()">保存</a>
+							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
+						</td>
+					</tr>
+
+				</table>
+			</form>
+		</div>
+	</body>
+	<script>
+		var datascope = {};
+		$(function() {
+			initTree();
+		})
+		
+		function initTree(){
+			$.ajax({
+				type:"get",
+				url:"https://www.jxufe-ischool.top/course/queryAllOpenCourse",
+				async:false,
+				dataType:'jsonp',
+				success : function(data){
+					console.log(data)
+					$('#course').datagrid('loadData',data.params.rows);
+					
+				}
+			});
+		}
+		
+		$(document).ready(function(){
+			$('#course').datagrid({
+				width: '100%',
+				heigth: "auto",
+				striped: true,
+				fitColumns: true,
+				fit: true,
+				toolbar:[
+					{
+						text: '修改',
+						iconCls: 'icon-edit',
+						handler:function(){
+							var editRow = $('#course').datagrid('getChecked');
+							console.log(editRow[0])
+							if(editRow == "") {
+								$.messager.alert('提示消息', "请选择要修改的数据", 'info');
+								return false;
+							}else if (editRow.length > 1) {
+								$.messager.alert('提示消息', "请选择一行数据", 'info');
+								return false;
+							}
+							else{
+								datascope.courseid = editRow[0].id;
+								openaeditpanel('修改课程位置')
+							}
+						}
+					}
+				],
+				columns: [
+					[{
+
+						field: 'ck',
+						checkbox: true
+
+					}, {
+						field: 'name',
+						title: '课程名称',
+						width: 100
+
+					}, {
+						field: 'notice',
+						title: '课程介绍',
+						width: 150
+					}, {
+						field: 'type',
+						title: '课程类型',
+						width: 70,
+						formatter: function(value, rec) {
+							return rec.type == '1' ? '公开课' :
+								rec.type == '2' ? '专属课' : '未知';
+						},
+						sortable: false
+					}, {
+						field: 'stuNum',
+						title: '参与人数',
+						width: 50
+					}, {
+						field: 'state',
+						title: '上架/下架',
+						width: 50,
+						formatter: function(value, rec) {
+							return rec.state == '0' ? '下架' :
+								rec.state == '1' ? '上架' : '未知';
+						},
+						sortable: false
+					}, {
+						field: 'position',
+						title: '课程位置',
+						width: 100,
+						formatter: function(value, rec) {
+							return rec.position == '1' ? '轮播' :
+								rec.position == '2' ? '精品' :
+								rec.position == '3' ? '热门' : '未知';
+						},
+						sortable: false
+					}]
+				]
+			})
+		})
+		function openaeditpanel(data){
+			$('#coursePosition').window({
+				modal: true,
+				resizable: false,
+				minimizable: false,
+				maximizable: false,
+				left: ($(window).width() - 650) * 0.5,
+				top: 80,
+				title: data
+
+			}, 'open');
+			$('#coursePosition').css({
+				'display': ''
+			});
+		}
+		
+		function save(){
+			$.ajax({
+				type:"get",
+				url:"https://www.jxufe-ischool.top/course/update",
+				async:false,
+				dataType:'jsonp',
+				data:{
+					position:$('#position').combobox('getValue').trim(),
+					id:datascope.courseid
+				},
+				success: function(data){
+						console.log(data);
+						$('#coursePosition').window('close');
+						refresh();
+					}
+			});
+		}
+		function cancel(){
+			$('#coursePosition').window('close');
+		}
+		function refresh(){
+			$.ajax({
+				type:"get",
+				url:"https://www.jxufe-ischool.top/course/queryAllOpenCourse",
+				async:false,
+				dataType:'jsonp',
+				success: function(data) {
+					
+					$('#course').datagrid('loadData', data.params);
+				}
+			});
+		}
+		
+		function selectData(data) {
+				var datajson = [];
+				for(var i = 0; i < data.length; i++) {
+					var state = "";
+				//	data[i].next == "0" ? state = "closed" : state = "open";
+					datajson.push({
+						"id": data[i].id,
+						"text": data[i].name,
+						
+					})
+				}
+				return datajson;
+			}
+	</script>
+</html>

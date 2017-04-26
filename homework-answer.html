@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="lib/easyui/themes/bootstrap/easyui.css" />
+		<link rel="stylesheet" href="lib/easyui/themes/icon.css" />
+		<link ref="stylesheet" href="lib/easyui/demo/demo.css" />
+		<link ref="stylesheet" href="css/login.css" />
+		<script src="lib/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/easyui/jquery.easyui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lib/template.js"></script>
+
+		<script type="text/javascript" src="lib/crypto1/crypto/crypto.js"></script>
+		<script type="text/javascript" src="lib/crypto1/hmac/hmac.js"></script>
+		<script type="text/javascript" src="lib/crypto1/sha1/sha1.js"></script>
+		<script type="text/javascript" src="lib/base64.js"></script>
+		<script type="text/javascript" src="js/base64.js"></script>
+		<script type="text/javascript" src="lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+		<script type="text/javascript" src="js/upload.js"></script>
+	</head>
+	<body class="easyui-layout">
+		<div data-options="region:'west',title:'课程/作业目录',split:true,iconCls:''" style="width:180px;padding: 10px;">
+			<ul id='nav'></ul>
+		</div>
+	</body>
+	<script>
+		$(function() {
+			initTree();
+		})
+		
+		function initTree(){
+			$.ajax({
+				type:"get",
+				url:"https://www.jxufe-ischool.top/course/queryTeacherCourses/16",
+				async:false,
+				dataType:'jsonp',
+				success:function(data){
+					console.log(data.params.rows)
+					var courseList = data.params.rows
+					var dataJson = selectData(data.params.rows)
+					
+					
+					
+					$('#nav').tree({
+						data: dataJson,
+						lines: true,
+						
+						
+					})
+				}
+			});
+		}
+		
+		
+		function selectData(data) {
+			var datajson = [];
+			for(var i = 0; i < data.length; i++) {
+				var state = "";
+				//	data[i].next == "0" ? state = "closed" : state = "open";
+				datajson.push({
+					"id": data[i].id,
+					"text": data[i].name,
+
+				})
+			}
+			return datajson;
+		}
+	</script>
+</html>

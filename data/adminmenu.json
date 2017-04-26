@@ -64,7 +64,7 @@
         "children": [{
                 "id": 31,
                 "parentId": 3,
-                "url": "person-menu.html",
+                "url": "homework.html",
                 "text": "作业信息管理",
                 "checked": false,
                 "state": null,
@@ -72,7 +72,7 @@
             },{
                 "id": 32,
                 "parentId": 3,
-                "url": "src/jbda/unit-menu.html",
+                "url": "homework-answer.html",
                 "text": "作业答案管理",
                 "checked": false,
                 "state": null,
