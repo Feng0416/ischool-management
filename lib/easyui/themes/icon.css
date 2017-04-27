@@ -7,6 +7,12 @@
 .icon-edit{
 	background:url('icons/pencil.png') no-repeat center center;
 }
+.icon-jujue{
+	background:url('icons/jujue.png') no-repeat center center;
+}
+.icon-chongzuo{
+	background:url('icons/chongzuo.png') no-repeat center center;
+}
 .icon-clear{
 	background:url('icons/clear.png') no-repeat center center;
 }

@@ -622,11 +622,71 @@ uploader.init();
 						var answerId = editRow[0].id;
 						$.ajax({
 							type:"get",
-							url:"https://www.jxufe-ischool.top/course/judgeHomeWork/"+answerId+"/",
+							url:"https://www.jxufe-ischool.top/course/judgeHomeWork/"+answerId+"/"+1,
 							async:false,
 							dataType:'jsonp',
 							success:function(data){
-								
+								$.ajax({
+									type:"get",
+									url:"https://www.jxufe-ischool.top/course/queryCourseHomeworkAnswer/"+datascope.id1,
+									async:false,
+									dataType:'jsonp',
+									success:function(data){
+										if(data.resStatus==200){
+										var answerList = data.params.rows;
+										for(var i=0;i<answerList.length;i++){
+											var answerObj = answerList[i];
+											var answerFile = answerObj.answerFile;
+											var answerFile1 = 'https://www.jxufe-ischool.top/files?'+answerFile;
+											delete answerObj.answerFile;
+											answerObj.answerFile = answerFile1
+										}
+										$('#answer').datagrid('loadData',answerList);
+									}
+									else if(data.resStatus==404){
+										$('#answer').datagrid('loadData',[]);
+									}
+									}
+								});
+							}
+						});
+					}
+				},{
+					text: '错误',
+					iconCls: 'icon-jujue',
+					handler: function() {
+						var editRow = $('#answer').datagrid('getChecked');
+						console.log(editRow)
+						var answerId = editRow[0].id;
+						$.ajax({
+							type:"get",
+							url:"https://www.jxufe-ischool.top/course/judgeHomeWork/"+answerId+"/"+0,
+							async:false,
+							dataType:'jsonp',
+							success:function(data){
+								console.log(data)
+								$.ajax({
+									type:"get",
+									url:"https://www.jxufe-ischool.top/course/queryCourseHomeworkAnswer/"+datascope.id1,
+									async:false,
+									dataType:'jsonp',
+									success:function(data){
+										if(data.resStatus==200){
+										var answerList = data.params.rows;
+										for(var i=0;i<answerList.length;i++){
+											var answerObj = answerList[i];
+											var answerFile = answerObj.answerFile;
+											var answerFile1 = 'https://www.jxufe-ischool.top/files?'+answerFile;
+											delete answerObj.answerFile;
+											answerObj.answerFile = answerFile1
+										}
+										$('#answer').datagrid('loadData',answerList);
+									}
+									else if(data.resStatus==404){
+										$('#answer').datagrid('loadData',[]);
+									}
+									}
+								});
 							}
 						});
 					}
@@ -649,7 +709,13 @@ uploader.init();
 					},{
 						field: 'answerFile',
 						title: '答案文件',
-						width: 500
+						width: 440,
+						 formatter: function(value,row,index){
+						 	if(row.answerFile!=null){
+						 		return '<a href="'+row.answerFile+'" class="easyui-linkbutton" iconCls="icon-cancel">'+row.answerFile+'</a>'
+						 	}
+        
+     } ,
 					},{
 						field: 'answerUserName',
 						title: '学生',
@@ -658,6 +724,17 @@ uploader.init();
 						field: 'answerTime',
 						title: '提交时间',
 						width: 150
+					},{
+						field: 'state',
+						title: '答题状态',
+						width: 100,
+						formatter : function(value, rec) {
+								return rec.state == '0' ? '不通过'
+										: rec.state == '1' ? '通过'
+										: rec.state == '2' ? '未做'
+										: rec.state == '3' ? '待批改':'未知'
+							},
+							sortable:true
 					}
 					]
 				]
@@ -683,7 +760,7 @@ uploader.init();
 		}
 		function openselectpanel(title,id) {
 
-			
+			datascope.id1 = id;
 			$('#homeworkanswer').window({
 				modal: true,
 				resizable: false,
@@ -705,7 +782,18 @@ uploader.init();
 				success:function(data){
 					console.log(data)
 					if(data.resStatus==200){
-						$('#answer').datagrid('loadData',data.params.rows);
+						var answerList = data.params.rows;
+						for(var i=0;i<answerList.length;i++){
+							var answerObj = answerList[i];
+							var answerFile = answerObj.answerFile;
+							if(answerFile!=null){
+								var answerFile1 = 'https://www.jxufe-ischool.top/files?'+answerFile;
+								delete answerObj.answerFile;
+								answerObj.answerFile = answerFile1
+							}
+							
+						}
+						$('#answer').datagrid('loadData',answerList);
 					}
 					else if(data.resStatus==404){
 						$('#answer').datagrid('loadData',[]);
