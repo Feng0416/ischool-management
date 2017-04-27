@@ -40,6 +40,7 @@
 						<td align="right">类型：</td>
 						<td>
 							<input id="type" editable="false" class="easyui-combobox" style="width:150px;" data-options="
+							
 							valueField: 'key',
 							textField: 'value',
 							data: [{
@@ -50,7 +51,7 @@
 										key: '2',
 										value: '专属课'
 									}],
-							panelHeight:50,
+							panelHeight:'auto'
 							" />
 						</td>
 					</tr>
@@ -81,6 +82,7 @@
 				</table>
 			</form>
 		</div>
+		
 	</body>
 	<script>
 	var datascope = {};
@@ -467,7 +469,7 @@ uploader.init();
 			selectnother();
 		}
 		function selectnother(){
-			$('#courseadd').datagrid("unselectAll");
+			$('#userform').form("clear");
 		}
 		function openaddpanel(data) {
 			$('#courseadd').window({

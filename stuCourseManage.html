@@ -29,8 +29,8 @@
 	<script>
 	var datascope={};
 	var cookieLogin = $.cookie('loginUser');
-			var cookieJson = JSON.parse(cookieLogin);
-			var loginid = cookieJson.params.user.id;
+			
+			var loginid = $.parseJSON($.cookie('loginUser')).id;
 			console.log(loginid);
 		$(function() {
 			$('#tabs').tabs({

@@ -377,6 +377,10 @@ uploader.init();
 		}
 		function cancel(){
 			$('#fileadd').window('close');
+			selectnother();
+		}
+		function selectnother(){
+			$('#userform').form('clear');
 		}
 		function refresh() {
 			$.ajax({

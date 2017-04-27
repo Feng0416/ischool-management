@@ -862,7 +862,9 @@ uploader.init();
 			$('#homeworkadd').window('close');
 			selectnother();
 		}
-
+		function selectnother(){
+			$('#userform').form('clear');
+		}
 		function selectData(data) {
 			var datajson = [];
 			for(var i = 0; i < data.length; i++) {
