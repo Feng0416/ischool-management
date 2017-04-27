@@ -40,7 +40,7 @@
 
 						<!--<input style="background-color: rgba(255,255,255,.1);border-radius: 19px;height: 38px;padding-left: 26px;color: rgba(255,255,255,.77);border: 0px;" type="password" id="password" name="password" >
 					<input style="display: none;" type="submit" value="注册"/>-->
-						<a class="zhuceBtn" id="zhuceBtn" style="background-color: #0073e6;border-radius: 19px;">注册</a>
+						<a class="zhuceBtn" id="zhuceBtn" style="background-color: #0073e6;border-radius: 19px;">点我注册</a>
 						<div id="message" style="margin-top: 20px;line-height: 30px;color: #fee5e5;"></div>
 					</div>
 			</div>
@@ -98,7 +98,7 @@
 						console.log(data.params.user.id);
 						
 						if(data.resStatus == 200) {
-							$.cookie('loginUser',JSON.stringify(data),{path:'/'});
+							$.cookie('loginUser',JSON.stringify(data.params.user),{path:'/'});
 								window.location.href = 'test01.html';
 						} else {
 							alert(data.resMsg);
@@ -110,37 +110,10 @@
 			}
 
 			$('#zhuceBtn').on('click', function() {
-				zhuce()
+				window.location.href='register.html'
 			})
 
-			function zhuce() {
-				$("#zhuceBtn").text("注册");
-				var email = $('#usercode').val();
-				var passwd = $('#password').val();
-				var params = {};
-				params.email = email;
-				//params.password = password;
-				params.passwd = passwd;
-				params.type = "2";
-				params.name = "冯腾"
 
-				$.ajax({
-					type: "GET",
-					url: "https://www.jxufe-ischool.top/user/preRegist",
-					data: params,
-					dataType: "jsonp",
-					success: function(data) {
-
-						if(data.resStatus == 200) {
-							alert('注册成功，请到邮箱激活');
-						} else {
-							alert(data.resMsg);
-						}
-					}
-				});
-
-				return false;
-			}
 
 		})
 

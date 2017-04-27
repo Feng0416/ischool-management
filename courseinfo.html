@@ -54,11 +54,7 @@
 							" />
 						</td>
 					</tr>
-					<tr>
-						
-						<td align="right">课程老师：</td>
-						<td><input id="name" class="easyui-textbox" style="width: 150px;" /></td>
-					</tr>
+					
 					
 					<tr>
 						<td align="right">课程介绍：</td>
@@ -88,6 +84,8 @@
 	</body>
 	<script>
 	var datascope = {};
+	var teacherId = $.parseJSON($.cookie('loginUser')).id;
+		console.log(teacherId)
 		var accessid= 'LTAI4TPzfMR4o0ic';
 		var accesskey= 'eWjyDSHLQFSa6vA6tSoCWXSoFed0WC';
 		var host = 'http://files.jxufe-ischool.top';
@@ -255,6 +253,7 @@ var uploader = new plupload.Uploader({
 		},
 
 		FileUploaded: function(up, file, info) {
+			datascope.fileUploadstatus = info.status;
             if (info.status == 200)
             {	
             	console.log(info);
@@ -278,7 +277,7 @@ var uploader = new plupload.Uploader({
 });
 
 uploader.init();
-
+		
 		$(function() {
 			initgrid();
 		})
@@ -286,7 +285,7 @@ uploader.init();
 		function initgrid() {
 			$.ajax({
 				type: "get",
-				url: "https://www.jxufe-ischool.top/course/queryall/16",
+				url: "https://www.jxufe-ischool.top/course/queryall/"+teacherId,
 				async: false,
 				dataType: 'jsonp',
 				success: function(data) {
@@ -319,7 +318,7 @@ uploader.init();
 							$.messager.alert('提示消息', "请选择要修改的数据", 'info');
 							return false;
 						}else{
-							
+							edit(editRow[0])
 						}
 					}
 				}, '-', {
@@ -339,7 +338,7 @@ uploader.init();
 								if(data.resStatus == 200) {
 									
 									$.messager.alert('提示消息', "删除成功", 'info');
-									
+									refresh();
 								} else {
 									$.messager.alert('提示消息', data.resMsg, 'info');
 								}
@@ -400,7 +399,9 @@ uploader.init();
 			if(!$("#userform").form('validate')) {
 				return false;
 			}else{
-				$.ajax({
+				console.log(datascope.id)
+				if(datascope.id==undefined){
+					$.ajax({
 					type:"get",
 					url:"https://www.jxufe-ischool.top/course/create",
 					async:false,
@@ -412,7 +413,7 @@ uploader.init();
 						
 						state:1,
 						notice:$('#notice').textbox('getText').trim(),
-						teacherId:16
+						teacherId:teacherId
 					},
 					success: function(data){
 						console.log(data);
@@ -420,12 +421,39 @@ uploader.init();
 						refresh();
 					}
 				});
+				}else{
+				
+
+					var imgUrl1='';
+					if(datascope.fileUploadstatus==200){
+						imgUrl1 = datascope.filepath;
+					}else{
+						imgUrl1 = datascope.imgUrl;
+					}
+					$.ajax({
+						type:"get",
+						url:"https://www.jxufe-ischool.top/course/update",
+						async:false,
+						data:{
+							name:$('#name').textbox('getText').trim(),
+							imageUrl:imgUrl1,
+							notice:$('#notice').textbox('getText').trim(),
+							id:teacherId
+						},
+						dataType:'jsonp',
+						success:function(data){
+							$('#courseadd').window('close');
+							refresh();
+						}
+					});
+				}
+				
 			}
 		}
 		function refresh(){
 			$.ajax({
 				type: "get",
-				url: "https://www.jxufe-ischool.top/course/queryall/16",
+				url: "https://www.jxufe-ischool.top/course/queryall/"+teacherId,
 				async: false,
 				dataType: 'jsonp',
 				success: function(data) {
@@ -455,6 +483,37 @@ uploader.init();
 				'display': ''
 			});
 		}
+		function edit(data){
+			datascope.id = data.id;
+			datascope.imgUrl = data.imageUrl;
+//			$('#name').textbox('setValue',data.name);
+//			$('#type').combobox('disable');
+//			$('#notice').textbox('setValue',data.notice);
+//			$('#courseadd').dialog({title: "修改"});
+//          $('#courseadd').window('open');
+			$('#courseadd').window({
+				modal: true,
+				resizable: false,
+				minimizable: false,
+				maximizable: false,
+				collapsible: false,
+				title: '修改',
+				onBeforeClose: function() {
+					$('#sectionadd').window('close', true);
+				},
+				left: ($(window).width() - 650) * 0.5,
+				top: 80,
+				title: data
+			}, 'open');
+			$('#courseadd').css({
+				'display': ''
+			});
+			$('#name').textbox('setText', data.name);
+			$('#type').combobox('disable');
+			$('#notice').textbox('setText', data.notice);
+		}
+		
+		
 	</script>
 
 </html>

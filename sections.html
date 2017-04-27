@@ -76,9 +76,9 @@
 							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
 						</td>
 					</tr>
-					<tr>
-						<td align="right">章节视频：</td>
-						<td>
+					<tr >
+						<td id="shipin" align="right">章节视频：</td>
+						<td id="xuanze">
 							<div id="container">
 			<a id="selectvideo" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择视频</a>
 			<!--<a id="selectfile" href="javascript:void(0);" iconCls="icon-add" class='easyui-linkbutton'>选择文件</a>-->
@@ -515,11 +515,14 @@
 						url: "https://www.jxufe-ischool.top/course/section/updateSection",
 						async: false,
 						data: {
-							name: $('#name').textbox('getText').trim()
+							name: $('#name').textbox('getText').trim(),
+							id:datascope.sectionId
 						},
 						dataType: 'jsonp',
 						success: function(data) {
 							console.log(data)
+							$('#sectionadd').window('close');
+							refresh();
 						}
 					});
 				}
@@ -549,6 +552,7 @@
 		}
 
 		function edit(data) {
+			datascope.sectionId1 = data.id;
 			$('#sectionadd').window({
 				modal: true,
 				resizable: false,
@@ -566,11 +570,14 @@
 			$('#sectionadd').css({
 				'display': ''
 			});
+			
+			
 			$('#name').textbox('setText', data.name);
 			$('#name').textbox('textbox').attr('readonly', false);
 			$('#type').combobox('disable');
 			$('#zhang').textbox('textbox').attr('readonly', true);
 			$('#checkzhang').linkbutton('disable');
+			
 			$('.savebtn').show();
 		}
 
