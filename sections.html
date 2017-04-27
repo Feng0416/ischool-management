@@ -441,6 +441,15 @@
 			$('#sectionadd').css({
 				'display': ''
 			});
+			$('#shipin').css({
+				'display': ''
+			});
+			$('#xuanze').css({
+				'display': ''
+			});
+			$('#type').combobox('enable');
+			$('#zhang').textbox('textbox').attr('readonly', false);
+			$('#checkzhang').linkbutton('enable');
 		}
 
 		function showcheckower() {
@@ -521,7 +530,7 @@
 						dataType: 'jsonp',
 						success: function(data) {
 							console.log(data)
-							$('#sectionadd').window('close');
+							
 							refresh();
 						}
 					});
@@ -569,6 +578,12 @@
 			}, 'open');
 			$('#sectionadd').css({
 				'display': ''
+			});
+			$('#shipin').css({
+				'display': 'none'
+			});
+			$('#xuanze').css({
+				'display': 'none'
 			});
 			
 			
