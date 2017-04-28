@@ -93,7 +93,7 @@
 					<tr class="savebtn">
 						<td colspan="4" align="center">
 							<a href="#" id="savetask" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width: 80px" onclick="save()">保存</a>
-							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
+							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">关闭</a>
 						</td>
 					</tr>
 
@@ -533,6 +533,7 @@ uploader.init();
 							$.messager.alert('提示消息', "请选择课程添加作业", 'info');
 							return false;
 						}
+						selectnother();
 						openaddpanel('添加');
 					}
 				}, '-', {
@@ -863,7 +864,12 @@ uploader.init();
 			selectnother();
 		}
 		function selectnother(){
-			$('#userform').form('clear');
+			$('#name').textbox('setValue','');
+			$('#content').textbox('setValue','');
+			$('#homeworkPerple').textbox('setValue','');
+			$('#limitDays').textbox('setValue','');
+			$('#completeNum').textbox('setValue','');
+			document.getElementById('ossfile').innerHTML = '';
 		}
 		function selectData(data) {
 			var datajson = [];

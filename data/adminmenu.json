@@ -69,14 +69,6 @@
                 "checked": false,
                 "state": null,
                 "children": []
-            },{
-                "id": 32,
-                "parentId": 3,
-                "url": "homework-answer.html",
-                "text": "作业答案管理",
-                "checked": false,
-                "state": null,
-                "children": []
             }
         ]
     }

@@ -75,7 +75,7 @@
 					<tr class="savebtn">
 						<td colspan="4" align="center">
 							<a href="#" id="savetask" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width: 80px" onclick="save()">保存</a>
-							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
+							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">关闭</a>
 						</td>
 					</tr>
 					
@@ -307,6 +307,7 @@ uploader.init();
 					text: '添加',
 					iconCls: 'icon-add',
 					handler: function() {
+						selectnother();
 						openaddpanel('添加');
 					}
 
@@ -403,6 +404,7 @@ uploader.init();
 			}else{
 				console.log(datascope.id)
 				if(datascope.id==undefined){
+					
 					$.ajax({
 					type:"get",
 					url:"https://www.jxufe-ischool.top/course/create",
@@ -419,7 +421,10 @@ uploader.init();
 					},
 					success: function(data){
 						console.log(data);
+						
 						$('#courseadd').window('close');
+						
+						
 						refresh();
 					}
 				});
@@ -440,10 +445,11 @@ uploader.init();
 							name:$('#name').textbox('getText').trim(),
 							imageUrl:imgUrl1,
 							notice:$('#notice').textbox('getText').trim(),
-							id:teacherId
+							id:datascope.id
 						},
 						dataType:'jsonp',
 						success:function(data){
+							delete datascope.id;
 							$('#courseadd').window('close');
 							refresh();
 						}
@@ -469,7 +475,10 @@ uploader.init();
 			selectnother();
 		}
 		function selectnother(){
-			$('#userform').form("clear");
+			$('#name').textbox('setValue','');
+			$('#type').textbox('setValue','');
+			$('#notice').textbox('setValue','');
+			document.getElementById('ossfile').innerHTML = '';
 		}
 		function openaddpanel(data) {
 			$('#courseadd').window({

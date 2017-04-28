@@ -73,7 +73,7 @@
 					<tr class="savebtn">
 						<td colspan="4" align="center">
 							<a href="#" id="savetask" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width: 80px" onclick="save()">保存</a>
-							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">取消</a>
+							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width: 80px" onclick="cancel()">关闭</a>
 						</td>
 					</tr>
 					<tr >
@@ -530,7 +530,7 @@
 						dataType: 'jsonp',
 						success: function(data) {
 							console.log(data)
-							
+							delete datascope.sectionId
 							refresh();
 						}
 					});
@@ -544,7 +544,10 @@
 		}
 
 		function selectnother() {
-			$('#userform').form("clear");
+			$('#name').textbox('setValue','');
+			$('#zhang').textbox('setValue','');
+			$('#type').textbox('setValue','');
+			document.getElementById('ossfile').innerHTML = '';
 		}
 
 		function refresh() {
